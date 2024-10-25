@@ -1,20 +1,15 @@
 <template>
   <div id="app">
-    <h1>Main Application</h1>
-    <!-- Render the dynamically loaded plugin component -->
-    <component :is="pluginComponent" message="test" />
+    <h1 className="font-bold border-b">Main Application</h1>
+
+    <RemotePlugin message="cooli" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, defineAsyncComponent } from "vue";
 import { loadPlugin } from "./utils/plugin-loader";
 
-const pluginComponent = ref(null);
-
-onMounted(async () => {
-  const pluginUrl = 'http://localhost:3000/pluginComponent.es.js';
-  pluginComponent.value = await loadPlugin(pluginUrl);
-  console.log(pluginComponent.value);
-});
+const RemotePlugin = defineAsyncComponent(() => import("remote_app/Plugin"));
+console.log(RemotePlugin);
 </script>
