@@ -1,37 +1,20 @@
 <template>
-  <div>
-    <h1>Plugin Demo</h1>
-    <component :is="PluginComponent" :msg="message" />
+  <div id="app">
+    <h1>Main Application</h1>
+    <!-- Render the dynamically loaded plugin component -->
+    <component :is="pluginComponent" message="test" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from "vue";
+import { loadPlugin } from "./utils/plugin-loader";
 
-const PluginComponent = ref(null);
-const message = 'Props test!';
-
-const loadScript = async (url: string) => {
-  try {
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      throw new Error('Failed to load the UMD module');
-    }
-    const moduleCode = await response.text();
-
-    return eval(moduleCode);
-  } catch(e) {
-    console.error(e);
-  }
-}
+const pluginComponent = ref(null);
 
 onMounted(async () => {
-  await loadScript('http://localhost:3000/plugin-demo.umd.cjs');
-  const pluginDemo = window['Plugin-Demo'];
-
-  PluginComponent.value = pluginDemo.setup({
-    props: { msg: message },
-  });
+  const pluginUrl = 'http://localhost:3000/pluginComponent.es.js';
+  pluginComponent.value = await loadPlugin(pluginUrl);
+  console.log(pluginComponent.value);
 });
 </script>
